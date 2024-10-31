@@ -27,6 +27,11 @@ class AgentRunner:
         self.thread = None
         return
     
+    def __del__(self) -> None:
+        print(self.client.beta.assistants.delete(assistant_id=self.student_assistant.id))
+        print(self.client.beta.assistants.delete(assistant_id=self.teacher_assistant.id))
+        return
+    
     def _print_latest_message(self, thread_id: str) -> None:
         messages = self.client.beta.threads.messages.list(
             thread_id=thread_id
