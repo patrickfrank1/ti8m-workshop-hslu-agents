@@ -6,7 +6,7 @@ def display_input_parameters():
         value='',
         description="OpenAI API Key:",
         placeholder="sk-...",
-        layout=widgets.Layout(width="500px", height="50px")
+        layout=widgets.Layout(width="500px", height="100px")
     )
     example_widget = widgets.Dropdown(
         options=["sales-customer", "teacher-student"],
@@ -20,16 +20,5 @@ def display_input_parameters():
         step=1,
         description="Länge der Unterhaltung:"
     )
-    test_instruction_widget = widgets.Text(
-        value='',
-        description="OpenAI API key:",
-        placeholder="sk-..."
-    )
-    test_instruction_widget = widgets.Textarea(
-        value='',
-        description="Anweisung an den Testagenten:",
-        placeholder="Diese Anweisung wird vom Testagenten berücksichtigt.",
-        layout=widgets.Layout(width="500px", height="50px")
-    )
-    display(api_key_widget, example_widget, conversation_length_widget, test_instruction_widget)
-    return api_key_widget, example_widget, conversation_length_widget, test_instruction_widget
+    display(api_key_widget, example_widget, conversation_length_widget)
+    return api_key_widget, example_widget, conversation_length_widget

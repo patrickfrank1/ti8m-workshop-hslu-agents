@@ -28,13 +28,10 @@ class AgentRunner:
         print(self.client.beta.assistants.delete(assistant_id=self.assistant.id))
         return
 
-    def start_conversation(self, tester_instruction: str, conversation_length: int = 2) -> None:
+    def start_conversation(self, conversation_length: int = 2) -> None:
         """
             Provide a conversation topic and let the agents have a conversation about it.
         """
-        tester_initial_instruction = f"{tester_instruction} Ask a question to the assistant."
-        tester_instruction = "Ask a clarifying question or a follow up question to the tutor that relates to the contents of the conversation."
-        assistant_instruction = "Answer the testers question."
         self.is_tester = True
         self.message_counter = 0
         self.thread = self.client.beta.threads.create()
@@ -42,13 +39,11 @@ class AgentRunner:
             run = self.client.beta.threads.runs.create_and_poll(
                 thread_id=self.thread.id,
                 assistant_id=self.tester.id,
-                instructions=tester_initial_instruction if i == 0 else tester_instruction
             )
             self._print_latest_message_batch(self.thread.id)
             run = self.client.beta.threads.runs.create_and_poll(
                 thread_id=self.thread.id,
                 assistant_id=self.assistant.id,
-                instructions=assistant_instruction
             )
             self._print_latest_message_batch(self.thread.id)
         return
@@ -63,7 +58,15 @@ class AgentRunner:
             )
             tester = self.client.beta.assistants.create(
                 name="Math Student",
-                instructions="You are a curious student studying for a math exam in trigonometry. Ask your questions to the tutor, ask for clarifications if necessary.",
+                instructions=(
+                    "You are a curious student studying for a math exam in trigonometry. "
+                    "You still need to learn a lot about pythagoras theorem and Euler's Identity. "
+                    "You need to find out if these concepts are connected to each other."
+                    "You also need to find out about the real world applications of these concepts. "
+                    "Ask for a visual expalaination. "
+                    "Ask one question at a time. "
+                    "Ask for clarifications if necessary. "
+                ),
                 tools=[{"type": "code_interpreter"}],
                 model="gpt-4o",
             )
@@ -92,8 +95,7 @@ class AgentRunner:
                     "- Du bist immer extrem gesprächig und fängst immer einen Smalltalk an z.B. über Ferien\n"
                 ),
                 tools=[],
-                model="gpt-4o",
-                #extra_headers={"OpenAI-Beta": "assistants=v1"}
+                model="gpt-4",
             )
             tester = self.client.beta.assistants.create(
                 name="Testkunde",
@@ -101,16 +103,16 @@ class AgentRunner:
                     "- Du sprichst nur Deutsch.\n"
                     "- Du bist ein Testkunde der als Kritiker agiert.\n"
                     "- Du fragst nicht ob es noch weitere Fragen gibt. Du bist der, der die Fragen stellt.\n"
-                    "- Du stellst nur Prüfungsfragen und bewertest die Antworten immer von 0-10.\n"
                     "- Du erfindest nie etwas und lügst nie. Falls du unsicher bist, sagst du das ganz explizit und bietest an mehr Sicherheit zu schaffen indem du weitere Nachforschungen anstellst.\n"
                     "- Du verwendest einen formalen professionellen Slang.\n"
                     "- Du kennst dich perfekt mit dem Schweizer Gesundheitswesen aus.\n"
-                    "- Du bewertest jede Eingabe mit einer skala von 0-10. 10 gut, 0 schlecht\n"
+                    "- Du möchtest herausfinden welche Reiseversicherungen der Verkäufe im Angebot hat.\n"
+                    "- Du willst nicht zu viel bezahlen.\n"
+                    "- Du benötigst die Reiseversicherung nur für einen einmonatigen Urlaub.\n"
+                    "- Stelle jeweils eine Frage und warte dann die Antwort des Gesprächspartners ab.\n"
                 ),
                 tools=[],
-                model="gpt-4o",
-                #temperature=2.0,
-                #extra_headers={"OpenAI-Beta": "assistants=v1"}
+                model="gpt-4"
             )
         else:
             raise ValueError("The requested example scenario does not exist. Please choose example='teacher-student' or example='sales-customer'.")
